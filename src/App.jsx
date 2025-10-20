@@ -1,11 +1,19 @@
-import { useState } from "react";
-import "./App.css";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Home from "./pages/Home";
+import AddFeedback from "./pages/AddFeedback";
+import Navbar from "./components/Navbar";
 
 function App() {
   return (
-    <>
-      <h2>Hello</h2>
-    </>
+    <Router>
+      <div className="min-h-screen">
+        <Navbar />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/add" element={<AddFeedback />} />
+        </Routes>
+      </div>
+    </Router>
   );
 }
 
