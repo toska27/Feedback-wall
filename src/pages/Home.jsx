@@ -1,5 +1,11 @@
 import { useEffect, useState } from "react";
-import { collection, getDocs, doc, updateDoc } from "firebase/firestore";
+import {
+  collection,
+  getDocs,
+  doc,
+  updateDoc,
+  deleteDoc,
+} from "firebase/firestore";
 import { db } from "../firebase/config";
 import FeedbackCard from "../components/FeedbackCard";
 
@@ -16,7 +22,7 @@ export default function Home() {
         }));
         setFeedbacks(data);
       } catch (error) {
-        console.error("Greška prilikom učitavanja:", error);
+        console.error("Error loading:", error);
       }
     };
 
@@ -33,13 +39,32 @@ export default function Home() {
     );
   };
 
+  const handleDelete = async (id) => {
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this feedback?"
+    );
+    if (!confirmDelete) return;
+
+    try {
+      await deleteDoc(doc(db, "feedbacks", id));
+      setFeedbacks((prev) => prev.filter((item) => item.id !== id));
+    } catch (error) {
+      alert("Error while deleting", error);
+    }
+  };
+
   return (
     <div className="max-w-5xl mx-auto px-4 py-8">
       <h2 className="text-3xl font-semibold mb-6">User impressions:</h2>
       {feedbacks.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
           {feedbacks.map((f) => (
-            <FeedbackCard key={f.id} feedback={f} onLike={handleLike} />
+            <FeedbackCard
+              key={f.id}
+              feedback={f}
+              onLike={handleLike}
+              onDelete={handleDelete}
+            />
           ))}
         </div>
       ) : (
