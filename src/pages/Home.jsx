@@ -5,6 +5,8 @@ import {
   doc,
   updateDoc,
   deleteDoc,
+  orderBy,
+  query,
 } from "firebase/firestore";
 import { db } from "../firebase/config";
 import FeedbackCard from "../components/FeedbackCard";
@@ -15,14 +17,21 @@ export default function Home() {
   useEffect(() => {
     const fetchFeedbacks = async () => {
       try {
-        const querySnapshot = await getDocs(collection(db, "feedbacks"));
+        const q = query(
+          collection(db, "feedbacks"),
+          orderBy("createdAt", "desc")
+        );
+
+        const querySnapshot = await getDocs(q);
+
         const data = querySnapshot.docs.map((doc) => ({
           id: doc.id,
           ...doc.data(),
         }));
+
         setFeedbacks(data);
       } catch (error) {
-        console.error("Error loading:", error);
+        alert("Error loading:", error);
       }
     };
 
